@@ -1,8 +1,3 @@
-" unimpaired.vim - Pairs of handy bracket mappings
-" Maintainer:   Tim Pope <http://tpo.pe/>
-" Version:      2.1
-" GetLatestVimScripts: 1590 1 :AutoInstall: unimpaired.vim
-
 if exists("g:loaded_unimpaired") || &cp || v:version < 700
   finish
 endif
@@ -307,46 +302,24 @@ function! s:Toggle(op) abort
   return eval('&'.a:op) ? 'no'.a:op : a:op
 endfunction
 
-function! s:CursorOptions() abort
-  return &cursorline && &cursorcolumn ? 'nocursorline nocursorcolumn' : 'cursorline cursorcolumn'
-endfunction
-
 function! s:option_map(letter, option, mode) abort
-  exe 'nmap <script> <Plug>(unimpaired-enable)' .a:letter ':<C-U>'.a:mode.' '.a:option.'<C-R>=<SID>StatuslineRefresh()<CR><CR>'
-  exe 'nmap <script> <Plug>(unimpaired-disable)'.a:letter ':<C-U>'.a:mode.' no'.a:option.'<C-R>=<SID>StatuslineRefresh()<CR><CR>'
   exe 'nmap <script> <Plug>(unimpaired-toggle)' .a:letter ':<C-U>'.a:mode.' <C-R>=<SID>Toggle("'.a:option.'")<CR><CR>'
 endfunction
 
-nmap <script> <Plug>(unimpaired-enable)b  :<C-U>set background=light<CR>
-nmap <script> <Plug>(unimpaired-disable)b :<C-U>set background=dark<CR>
-nmap <script> <Plug>(unimpaired-toggle)b  :<C-U>set background=<C-R>=&background == "dark" ? "light" : "dark"<CR><CR>
 call s:option_map('c', 'cursorline', 'setlocal')
-call s:option_map('-', 'cursorline', 'setlocal')
-call s:option_map('_', 'cursorline', 'setlocal')
-call s:option_map('u', 'cursorcolumn', 'setlocal')
-call s:option_map('<Bar>', 'cursorcolumn', 'setlocal')
-nmap <script> <Plug>(unimpaired-enable)d  :<C-U>diffthis<CR>
-nmap <script> <Plug>(unimpaired-disable)d :<C-U>diffoff<CR>
 nmap <script> <Plug>(unimpaired-toggle)d  :<C-U><C-R>=&diff ? "diffoff" : "diffthis"<CR><CR>
 call s:option_map('h', 'hlsearch', 'set')
-call s:option_map('i', 'ignorecase', 'set')
 call s:option_map('l', 'list', 'setlocal')
 call s:option_map('n', 'number', 'setlocal')
 call s:option_map('r', 'relativenumber', 'setlocal')
 call s:option_map('s', 'spell', 'setlocal')
 call s:option_map('w', 'wrap', 'setlocal')
+
 if empty(maparg('<Plug>(unimpaired-toggle)z', 'n'))
   call s:option_map('z', 'spell', 'setlocal')
 endif
-nmap <script> <Plug>(unimpaired-enable)v  :<C-U>set virtualedit+=all<CR>
-nmap <script> <Plug>(unimpaired-disable)v :<C-U>set virtualedit-=all<CR>
+
 nmap <script> <Plug>(unimpaired-toggle)v  :<C-U>set <C-R>=(&virtualedit =~# "all") ? "virtualedit-=all" : "virtualedit+=all"<CR><CR>
-nmap <script> <Plug>(unimpaired-enable)x  :<C-U>set cursorline cursorcolumn<CR>
-nmap <script> <Plug>(unimpaired-disable)x :<C-U>set nocursorline nocursorcolumn<CR>
-nmap <script> <Plug>(unimpaired-toggle)x  :<C-U>set <C-R>=<SID>CursorOptions()<CR><CR>
-nmap <script> <Plug>(unimpaired-enable)+  :<C-U>set cursorline cursorcolumn<CR>
-nmap <script> <Plug>(unimpaired-disable)+ :<C-U>set nocursorline nocursorcolumn<CR>
-nmap <script> <Plug>(unimpaired-toggle)+  :<C-U>set <C-R>=<SID>CursorOptions()<CR><CR>
 
 function! s:ColorColumn(should_clear) abort
   if !empty(&colorcolumn)
@@ -354,22 +327,10 @@ function! s:ColorColumn(should_clear) abort
   endif
   return a:should_clear ? '' : get(s:, 'colorcolumn', get(g:, 'unimpaired_colorcolumn', '+1'))
 endfunction
-nmap <script> <Plug>(unimpaired-enable)t  :<C-U>set colorcolumn=<C-R>=<SID>ColorColumn(0)<CR><CR>
-nmap <script> <Plug>(unimpaired-disable)t :<C-U>set colorcolumn=<C-R>=<SID>ColorColumn(1)<CR><CR>
 nmap <script> <Plug>(unimpaired-toggle)t  :<C-U>set colorcolumn=<C-R>=<SID>ColorColumn(!empty(&cc))<CR><CR>
 
 exe s:Map('n', 'yo', '<Plug>(unimpaired-toggle)')
-exe s:Map('n', '[o', '<Plug>(unimpaired-enable)')
-exe s:Map('n', ']o', '<Plug>(unimpaired-disable)')
 exe s:Map('n', 'yo<Esc>', '<Nop>')
-exe s:Map('n', '[o<Esc>', '<Nop>')
-exe s:Map('n', ']o<Esc>', '<Nop>')
-exe s:Map('n', '=s', '<Plug>(unimpaired-toggle)')
-exe s:Map('n', '<s', '<Plug>(unimpaired-enable)')
-exe s:Map('n', '>s', '<Plug>(unimpaired-disable)')
-exe s:Map('n', '=s<Esc>', '<Nop>')
-exe s:Map('n', '<s<Esc>', '<Nop>')
-exe s:Map('n', '>s<Esc>', '<Nop>')
 
 function! s:RestorePaste() abort
   if exists('s:paste')
