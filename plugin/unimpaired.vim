@@ -248,48 +248,6 @@ nnoremap <silent> <Plug>unimpairedBlankDown :<C-U>exe <SID>BlankDown()<CR>
 exe s:Map('n', '[<Space>', '<Plug>(unimpaired-blank-up)')
 exe s:Map('n', ']<Space>', '<Plug>(unimpaired-blank-down)')
 
-function! s:ExecMove(cmd) abort
-  let old_fdm = &foldmethod
-  if old_fdm !=# 'manual'
-    let &foldmethod = 'manual'
-  endif
-  normal! m`
-  silent! exe a:cmd
-  norm! ``
-  if old_fdm !=# 'manual'
-    let &foldmethod = old_fdm
-  endif
-endfunction
-
-function! s:Move(cmd, count, map) abort
-  call s:ExecMove('move'.a:cmd.a:count)
-  silent! call repeat#set("\<Plug>(unimpaired-move-".a:map.")", a:count)
-endfunction
-
-function! s:MoveSelectionUp(count) abort
-  call s:ExecMove("'<,'>move'<--".a:count)
-  silent! call repeat#set("\<Plug>(unimpaired-move-selection-up)", a:count)
-endfunction
-
-function! s:MoveSelectionDown(count) abort
-  call s:ExecMove("'<,'>move'>+".a:count)
-  silent! call repeat#set("\<Plug>(unimpaired-move-selection-down)", a:count)
-endfunction
-
-nnoremap <silent> <Plug>(unimpaired-move-up)            :<C-U>call <SID>Move('--',v:count1,'up')<CR>
-nnoremap <silent> <Plug>(unimpaired-move-down)          :<C-U>call <SID>Move('+',v:count1,'down')<CR>
-noremap  <silent> <Plug>(unimpaired-move-selection-up)   :<C-U>call <SID>MoveSelectionUp(v:count1)<CR>
-noremap  <silent> <Plug>(unimpaired-move-selection-down) :<C-U>call <SID>MoveSelectionDown(v:count1)<CR>
-nnoremap <silent> <Plug>unimpairedMoveUp            :<C-U>call <SID>Move('--',v:count1,'up')<CR>
-nnoremap <silent> <Plug>unimpairedMoveDown          :<C-U>call <SID>Move('+',v:count1,'down')<CR>
-noremap  <silent> <Plug>unimpairedMoveSelectionUp   :<C-U>call <SID>MoveSelectionUp(v:count1)<CR>
-noremap  <silent> <Plug>unimpairedMoveSelectionDown :<C-U>call <SID>MoveSelectionDown(v:count1)<CR>
-
-exe s:Map('n', '[e', '<Plug>(unimpaired-move-up)')
-exe s:Map('n', ']e', '<Plug>(unimpaired-move-down)')
-exe s:Map('x', '[e', '<Plug>(unimpaired-move-selection-up)')
-exe s:Map('x', ']e', '<Plug>(unimpaired-move-selection-down)')
-
 " Section: Option toggling
 
 function! s:StatuslineRefresh() abort
@@ -364,43 +322,6 @@ nmap <script><silent> <Plug>(unimpaired-paste) :<C-U>call <SID>SetupPaste()<CR>
 nmap <script><silent> <Plug>(unimpaired-enable)p  :<C-U>call <SID>SetupPaste()<CR>O
 nmap <script><silent> <Plug>(unimpaired-disable)p :<C-U>call <SID>SetupPaste()<CR>o
 nmap <script><silent> <Plug>(unimpaired-toggle)p  :<C-U>call <SID>SetupPaste()<CR>0C
-
-" Section: Put
-
-function! s:putline(how, map) abort
-  let [body, type] = [getreg(v:register), getregtype(v:register)]
-  if type ==# 'V'
-    exe 'normal! "'.v:register.a:how
-  else
-    call setreg(v:register, body, 'l')
-    exe 'normal! "'.v:register.a:how
-    call setreg(v:register, body, type)
-  endif
-  silent! call repeat#set("\<Plug>(unimpaired-put-".a:map.")")
-endfunction
-
-nnoremap <silent> <Plug>(unimpaired-put-above) :call <SID>putline('[p', 'above')<CR>
-nnoremap <silent> <Plug>(unimpaired-put-below) :call <SID>putline(']p', 'below')<CR>
-nnoremap <silent> <Plug>(unimpaired-put-above-rightward) :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR>>']
-nnoremap <silent> <Plug>(unimpaired-put-below-rightward) :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR>>']
-nnoremap <silent> <Plug>(unimpaired-put-above-leftward)  :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR><']
-nnoremap <silent> <Plug>(unimpaired-put-below-leftward)  :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR><']
-nnoremap <silent> <Plug>(unimpaired-put-above-reformat)  :<C-U>call <SID>putline(v:count1 . '[p', 'Above')<CR>=']
-nnoremap <silent> <Plug>(unimpaired-put-below-reformat)  :<C-U>call <SID>putline(v:count1 . ']p', 'Below')<CR>=']
-nnoremap <silent> <Plug>unimpairedPutAbove :call <SID>putline('[p', 'above')<CR>
-nnoremap <silent> <Plug>unimpairedPutBelow :call <SID>putline(']p', 'below')<CR>
-
-exe s:Map('n', '[p', '<Plug>(unimpaired-put-above)')
-exe s:Map('n', ']p', '<Plug>(unimpaired-put-below)')
-exe s:Map('n', '[P', '<Plug>(unimpaired-put-above)')
-exe s:Map('n', ']P', '<Plug>(unimpaired-put-below)')
-
-exe s:Map('n', '>P', "<Plug>(unimpaired-put-above-rightward)")
-exe s:Map('n', '>p', "<Plug>(unimpaired-put-below-rightward)")
-exe s:Map('n', '<P', "<Plug>(unimpaired-put-above-leftward)")
-exe s:Map('n', '<p', "<Plug>(unimpaired-put-below-leftward)")
-exe s:Map('n', '=P', "<Plug>(unimpaired-put-above-reformat)")
-exe s:Map('n', '=p', "<Plug>(unimpaired-put-below-reformat)")
 
 " Section: Encoding and decoding
 
